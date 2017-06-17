@@ -79,6 +79,9 @@ _POOLING_LOOP_TIMEOUT = 10  # number of seconds to wait before restarting a cycl
 _RESPONSE_SLEEPTIME = 0.05  # seconds to wait while waiting for a response in asynchronous strategies
 _RESPONSE_WAITING_TIMEOUT = 3  # waiting timeout for receiving a response in asynchronous strategies
 _SOCKET_SIZE = 4096  # socket byte size
+_SOCKET_KEEP_IDLE = 1  # The time (in seconds) the connection needs to remain idle before TCP starts sending keepalive probes.
+_SOCKET_KEEP_INTERVAL = 3  # The time (in seconds) between individual keepalive probes.
+_SOCKET_KEEP_COUNT = 5  # The maximum number of failed keepalive probes TCP should send before dropping the connection.
 _CHECK_AVAILABILITY_TIMEOUT = 2.5  # default timeout for socket connect when checking availability
 _RESET_AVAILABILITY_TIMEOUT = 5  # default timeout for resetting the availability status when checking candidate addresses
 _RESTARTABLE_SLEEPTIME = 2  # time to wait in a restartable strategy before retrying the request
@@ -113,6 +116,12 @@ def get_config_parameter(parameter):
         return _RESPONSE_WAITING_TIMEOUT
     elif parameter == 'SOCKET_SIZE':  # Integer
         return _SOCKET_SIZE
+    elif parameter == 'SOCKET_KEEP_IDLE':
+        return _SOCKET_KEEP_IDLE
+    elif parameter == 'SOCKET_KEEP_INTERVAL':
+        return _SOCKET_KEEP_INTERVAL
+    elif parameter == 'SOCKET_KEEP_COUNT':
+        return _SOCKET_KEEP_COUNT
     elif parameter == 'CHECK_AVAILABILITY_TIMEOUT':  # Integer
         return _CHECK_AVAILABILITY_TIMEOUT
     elif parameter == 'RESTARTABLE_SLEEPTIME':  # Integer
@@ -194,6 +203,15 @@ def set_config_parameter(parameter, value):
     elif parameter == 'SOCKET_SIZE':
         global _SOCKET_SIZE
         _SOCKET_SIZE = value
+    elif parameter == 'SOCKET_KEEP_IDLE':
+        global _SOCKET_KEEP_IDLE
+        _SOCKET_KEEP_IDLE = value
+    elif parameter == 'SOCKET_KEEP_INTERVAL':
+        global _SOCKET_KEEP_INTERVAL
+        _SOCKET_KEEP_INTERVAL = value
+    elif parameter == 'SOCKET_KEEP_COUNT':
+        global _SOCKET_KEEP_COUNT
+        _SOCKET_KEEP_COUNT = value
     elif parameter == 'CHECK_AVAILABILITY_TIMEOUT':
         global _CHECK_AVAILABILITY_TIMEOUT
         _CHECK_AVAILABILITY_TIMEOUT = value

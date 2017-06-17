@@ -317,7 +317,8 @@ class ReusableStrategy(BaseStrategy):
                                          lazy=False,
                                          fast_decoder=self.master_connection.fast_decoder,
                                          receive_timeout=self.master_connection.receive_timeout,
-                                         return_empty_attributes=self.master_connection.empty_attributes)
+                                         return_empty_attributes=self.master_connection.empty_attributes,
+                                         use_keep_alive=self.master_connection.use_keep_alive)
 
             # simulates auto_bind, always with read_server_info=False
             if self.master_connection.auto_bind and self.master_connection.auto_bind != AUTO_BIND_NONE:

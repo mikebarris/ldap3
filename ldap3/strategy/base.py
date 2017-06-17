@@ -212,6 +212,25 @@ class BaseStrategy(object):
                 self.connection.last_error = 'unable to set receive timeout for socket connection: ' + str(e)
                 exc = e
 
+        if self.connection.use_keep_alive:
+            try:
+                if system().lower() == 'windows':
+                    self.connection.socket.ioctl(
+                        socket.SIO_KEEPALIVE_VALS, (1, get_config_parameter('SOCKET_KEEP_IDLE') * 1000, get_config_parameter('SOCKET_KEEP_INTERVAL') * 1000))
+                elif system().lower() == 'darwin':
+                    TCP_KEEPALIVE = 0x10
+                    self.connection.socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+                    self.connection.socket.setsockopt(socket.IPPROTO_TCP, TCP_KEEPALIVE, get_config_parameter('SOCKET_KEEP_INTERVAL'))
+                else:
+                    self.connection.socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+                    self.connection.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, get_config_parameter('SOCKET_KEEP_IDLE'))
+                    self.connection.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, get_config_parameter('SOCKET_KEEP_INTERVAL'))
+                    self.connection.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, get_config_parameter('SOCKET_KEEP_COUNT'))
+
+            except socket.error as e:
+                self.connection.last_error = 'unable to set keepalive for socket connection: ' + str(e)
+                exc = e
+
         if exc:
             if log_enabled(ERROR):
                 log(ERROR, '<%s> for <%s>', self.connection.last_error, self.connection)

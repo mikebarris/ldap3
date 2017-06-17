@@ -168,6 +168,8 @@ class Connection(object):
     :param auto_escape: automatic escaping of filter values
     :param auto_encode: automatic encoding of attribute values
     :type use_referral_cache: bool
+    :param use_keep_alive: enable tcp keepalives
+    :type use_keep_alive: bool
     """
 
     def __init__(self,
@@ -195,7 +197,8 @@ class Connection(object):
                  return_empty_attributes=True,
                  use_referral_cache=False,
                  auto_escape=True,
-                 auto_encode=True):
+                 auto_encode=True,
+                 use_keep_alive=False):
 
         conf_default_pool_name = get_config_parameter('DEFAULT_THREADED_POOL_NAME')
         self.lock = RLock()  # re-entrant lock to ensure that operations in the Connection object are executed atomically in the same thread
@@ -266,6 +269,7 @@ class Connection(object):
             self.use_referral_cache = use_referral_cache
             self.auto_escape = auto_escape
             self.auto_encode = auto_encode
+            self.use_keep_alive = use_keep_alive
 
             if isinstance(server, STRING_TYPES):
                 server = Server(server)
@@ -384,6 +388,7 @@ class Connection(object):
         r += '' if self.auto_range is None else (', auto_range=' + ('True' if self.auto_range else 'False'))
         r += '' if self.receive_timeout is None else ', receive_timeout={0.receive_timeout!r}'.format(self)
         r += '' if self.empty_attributes is None else (', return_empty_attributes=' + ('True' if self.empty_attributes else 'False'))
+        r += '' if self.use_keep_alive is None else (', use_keep_alive=' + ('True' if self.use_keep_alive else 'False'))
         r += ')'
 
         return r
@@ -419,6 +424,7 @@ class Connection(object):
         r += '' if self.fast_decoder is None else (', fast_decoder=' + 'True' if self.fast_decoder else 'False')
         r += '' if self.receive_timeout is None else ', receive_timeout={0.receive_timeout!r}'.format(self)
         r += '' if self.empty_attributes is None else (', return_empty_attributes=' + 'True' if self.empty_attributes else 'False')
+        r += '' if self.use_keep_alive is None else (', use_keep_alive=' + 'True' if self.use_keep_alive else 'False')
 
         r += ')'
 
